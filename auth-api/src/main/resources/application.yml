@@ -50,3 +50,5 @@ instance:
 token:
   initializer:
     enabled: false  # Disable TokenInitializer for auth-api
+
+# 수정 감지 테스트
