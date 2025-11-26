@@ -27,7 +27,7 @@ jobs:
         id: changed-mods
         shell: bash
         run: |
-          git fetch origin develop --depth=0
+          git fetch origin develop
 
           CHANGED_FILES=$(git diff --name-only origin/develop...HEAD)
 
