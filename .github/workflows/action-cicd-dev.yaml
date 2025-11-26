@@ -1,0 +1,54 @@
+name: Deploy DEV
+
+on:
+  push:
+    branches: [ "develop" ]  # develop push trigger 시 실행
+    # paths-ignore:
+    #   - '.github/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  detect-modules:
+    name: Detect Changed Modules
+    runs-on: ubuntu-latest
+    # runs-on: [ dev-runner, self-hosted ]
+    changed: ${{ steps.changed-mods.outputs.changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+      
+      - name: Determine changed files and modules
+        id: changed-mods
+        shell: bash
+        run: |
+          git fetch origin develop --depth=0
+
+          CHANGED_FILES=$(git diff --name-only origin/develop...HEAD)
+
+          ALL_MODULES="auth-api gateway payment-api user-api"
+          MODULES=""
+
+          for m in $ALL_MODULES; do
+            if echo "$CHANGED_FILES" | grep -q "$m/"; then
+              MODULES="$MODULES $m"
+            fi
+          done
+
+          if echo "$CHANGED_FILES" | grep -q "common/"; then
+            MODULES="$ALL_MODULES"
+          fi
+
+          MODULES=$(echo $MODULES | xargs) # trim
+          echo "Changed modules: $MODULES"
+          echo "changed=$MODULES" >> $GITHUB_OUTPUT
+
+
+
+
+
+
