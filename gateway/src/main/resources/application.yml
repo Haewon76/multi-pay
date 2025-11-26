@@ -81,3 +81,5 @@ spring:
 instance:
   id: gateway
   key: ${random.uuid}
+
+# 변경감지 테스트234234234

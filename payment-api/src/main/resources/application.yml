@@ -52,3 +52,5 @@ spring:
 instance:
   id: payment
   key: ${random.uuid}
+
+# 변경감지 테스트345345345
