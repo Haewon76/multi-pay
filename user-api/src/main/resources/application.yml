@@ -1,0 +1,54 @@
+server:
+  port: 30003
+  forward-headers-strategy: native
+  error:
+    whitelabel:
+      enabled: false
+    include-message: never
+    include-exception: true
+    include-stacktrace: never
+
+spring:
+  main:
+    web-application-type: servlet
+  application:
+    name: user-service
+  mvc:
+    servlet:
+      path: /api/user
+#  cloud:
+#    compatibility-verifier:
+#      enabled: true
+  data:
+    redis:
+      host: 192.168.55.246
+      port: 6379
+      password: 3Nl4CLPTNn
+      database: 0
+  datasource:
+    url: jdbc:mysql://192.168.55.247:3306/mallowlink-pay
+    username: mallowlink-dev
+    password: KdwZYj8nZL
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 40000
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  config:
+    import: 
+      - "classpath:common.yml"
+      - "classpath:common-${spring.profiles.active}.yml"
+  #    import: "optional:configserver:http://config-server:8888"
+  profiles:
+    active: local
+
+instance:
+  id: user
+  key: ${random.uuid}

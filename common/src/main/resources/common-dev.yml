@@ -1,0 +1,15 @@
+internal:
+  service:
+    gateway:
+      url: http://gateway-rollout-active-svc:8080
+    auth-api:
+      url: http://auth-rollout-active-svc:8080
+    user-api:
+      url: http://user-rollout-active-svc:8080
+    payment-api:
+      url: http://payment-rollout-active-svc:8080
+
+jwt:
+  secret: mallowlinkSecretKey_ThisIsALongerSecretKeyForJwtSigning_AtLeast32Chars
+  expiration: 86400000  # 1 day in milliseconds
+  refresh-expiration: 604800000  # 7 days in milliseconds

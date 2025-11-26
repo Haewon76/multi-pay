@@ -1,0 +1,52 @@
+server:
+  port: 30002
+  forward-headers-strategy: native
+  error:
+    whitelabel:
+      enabled: false
+    include-message: never # never(기본), always
+    include-exception: true
+    include-stacktrace: never # never(기본), always
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: auth-service
+  webflux:
+    base-path: /api/auth
+  config:
+    import:
+      - "classpath:common.yml"
+      - "classpath:common-${spring.profiles.active}.yml"
+  data:
+    redis:
+      host: redis-master
+      port: 6379
+      password: 3Nl4CLPTNn
+      database: 0
+  datasource:
+#    url: jdbc:mysql://ml-pay-dev-mysql:3306/mallowlink-pay
+    url: jdbc:mysql://192.168.55.247:3306/mallowlink-pay
+    username: mallowlink-dev
+    password: KdwZYj8nZL
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 40000
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+instance:
+  id: auth-api
+  key: ${random.uuid}
+
+token:
+  initializer:
+    enabled: false  # Disable TokenInitializer for auth-api

@@ -1,0 +1,6 @@
+external:
+  service:
+    kakao:
+      url: https://kauth.kakao.com/oauth/token
+    tiger:
+      url: https://tiger-dev.mallowlink.com

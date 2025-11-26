@@ -1,0 +1,83 @@
+server:
+  port: 30001
+  servlet:
+    context-path: /api
+  forward-headers-strategy: native
+  error:
+    whitelabel:
+      enabled: false
+    include-message: never # never(기본), always
+    include-exception: true
+    include-stacktrace: never # never(기본), always
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+#    compatibility-verifier:
+#      enabled: true   # Spring Cloud 호환성 검사 default: true
+    gateway:
+      routes:
+        - id: external-api              # 외부 연결을 위한 Route 설정
+          uri: https://external.api.com
+          predicates:
+            - Path=/external-api/**
+          filters:
+            - StripPrefix=1
+        - id: user-service
+          uri: http://user-rollout-active-svc:8080  # Direct URL instead of service discovery
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@userKeyResolver}"
+        - id: auth-service
+          uri: http://auth-rollout-active-svc:8080  # Direct URL to auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@ipKeyResolver}"
+        - id: payment-service
+          uri: http://payment-rollout-active-svc:8080  # Direct URL to auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@ipKeyResolver}"
+  data:
+    redis:
+      host: redis-master
+      port: 6379
+      password: 3Nl4CLPTNn
+#      database: 0
+
+  config:
+    import:
+      - "classpath:common.yml"
+      - "classpath:common-${spring.profiles.active}.yml"
+#      - optional:classpath:/common.yml
+#      - optional:classpath:/common-${spring.profiles.active}.yml
+  #    import: "optional:configserver:http://config-server:8888"
+
+  kafka:
+    producer:
+#      bootstrap-servers: "localhost:19092,localhost:29092,localhost:39092"
+      bootstrap-servers: "192.168.55.248:9095"
+instance:
+  id: gateway
+  key: ${random.uuid}

@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Lombok for annotations like @Slf4j
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // BouncyCastle for cryptography
+    api 'org.bouncycastle:bcprov-jdk15on:1.70'
+    api 'org.bouncycastle:bcpkix-jdk15on:1.70'
+
+    // Spring dependencies
+    api 'org.springframework:spring-context:6.1.5'
+//    api 'org.springframework:spring-web:6.1.5'
+//    api 'org.springframework.boot:spring-boot-starter-webflux:3.2.12'
+//    api 'org.springframework.boot:spring-boot-starter-web:3.2.12'
+    api 'org.springframework.boot:spring-boot-starter-data-redis-reactive:3.2.12'
+
+    // Jakarta Servlet API for HttpServletRequest
+    api 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    // Jackson for JSON serialization
+    api 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+
+    // Logback for logging
+    api 'ch.qos.logback:logback-classic:1.4.11'
+
+    api "io.opentelemetry:opentelemetry-api:1.31.0"
+
+    // JWT dependencies
+    api 'io.jsonwebtoken:jjwt-api:0.11.5'
+    api 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    api 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

@@ -1,0 +1,15 @@
+internal:
+  service:
+    gateway:
+      url: http://localhost:30001
+    auth-api:
+      url: http://localhost:30002
+    user-api:
+      url: http://localhost:30003
+    payment-api:
+      url: http://localhost:30004
+
+jwt:
+  secret: mallowlinkSecretKey_ThisIsALongerSecretKeyForJwtSigning_AtLeast32Chars
+  expiration: 604800000  # 7 days in milliseconds
+  refresh-expiration: 2592000000  # 30 days in milliseconds

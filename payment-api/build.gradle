@@ -1,0 +1,21 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Explicitly add spring-web with compatible version
+    implementation 'org.springframework:spring-web:6.1.5'
+
+    // Database dependencies
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
+
+    /*// Redis for caching
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    implementation 'io.github.openfeign:feign-okhttp'
+    implementation 'io.github.openfeign:feign-soap'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'*/
+
+    // Common module dependency
+    implementation project(':common')
+}

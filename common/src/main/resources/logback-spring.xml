@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!-- 한국 시간대 설정 (Asia/Seoul) -->
+    <property name="LOG_TIMEZONE" value="Asia/Seoul"/>
+
+    <!-- 스프링 부트 애플리케이션 이름 확인 -->
+    <springProperty scope="context" name="springAppName" source="spring.application.name" defaultValue="app"/>
+
+    <!-- MaskingLoggingAppender 설정 (콘솔 출력 포함) -->
+    <appender name="maskingAppender" class="com.mallowlink.common.logger.MaskingLoggingAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX, ${LOG_TIMEZONE}} trace_id=%X{trace_id} span_id=%X{span_id} trace_flags=%X{trace_flags} %+5level ${PID:- } --- [%11.11thread][%X{userId}] %-40.40(%logger{39}:%L) - %M\(\):%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 파일 로깅 설정 (애플리케이션별 파일 생성) - 마스킹 처리 포함 -->
+    <appender name="FILE_MASKING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${springAppName}/${springAppName}-%d{yyyy-MM-dd, ${LOG_TIMEZONE}}.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX, ${LOG_TIMEZONE}} trace_id=%X{trace_id} span_id=%X{span_id} trace_flags=%X{trace_flags} %+5level ${PID:- } --- [%11.11thread][%X{userId}] %-40.40(%logger{39}:%L) - %M\(\):%msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 날짜별 롤링 설정 (한국 시간 기준) -->
+            <fileNamePattern>logs/${springAppName}/${springAppName}-%d{yyyy-MM-dd, ${LOG_TIMEZONE}}.log</fileNamePattern>
+            <!-- 30일간 보관 -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <!-- 로그 디렉토리가 없으면 자동 생성 -->
+        <prudent>true</prudent>
+    </appender>
+
+    <root>
+        <level value="DEBUG"/>
+        <appender-ref ref="maskingAppender"/>
+        <appender-ref ref="FILE_MASKING"/>
+    </root>
+
+    <springProfile name="local | dev | dev-local">
+        <logger name="com.mallowlink" level="DEBUG" additivity="false">
+            <appender-ref ref="maskingAppender"/>
+            <appender-ref ref="FILE_MASKING"/>
+<!--            <appender-ref ref="slackAppender"/>-->
+        </logger>
+        <logger name="org.springframework" level="DEBUG" additivity="false">
+            <appender-ref ref="maskingAppender"/>
+            <appender-ref ref="FILE_MASKING"/>
+        </logger>
+        <logger name="org.springframework.web.client" level="DEBUG" additivity="false">
+            <appender-ref ref="maskingAppender"/>
+            <appender-ref ref="FILE_MASKING"/>
+        </logger>
+        <logger name="com.openhtmltopdf" level="DEBUG" additivity="false">
+            <appender-ref ref="maskingAppender"/>
+            <appender-ref ref="FILE_MASKING"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="prd">
+        <logger name="com.mallowlink" level="INFO" additivity="false">
+            <appender-ref ref="maskingAppender"/>
+            <appender-ref ref="FILE_MASKING"/>
+<!--            <appender-ref ref="slackAppender"/>-->
+        </logger>
+        <logger name="org.springframework" level="WARN" additivity="false">
+            <appender-ref ref="maskingAppender"/>
+            <appender-ref ref="FILE_MASKING"/>
+        </logger>
+    </springProfile>
+
+</configuration>
