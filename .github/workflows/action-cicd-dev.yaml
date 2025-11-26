@@ -27,9 +27,20 @@ jobs:
         id: changed-mods
         shell: bash
         run: |
-          git fetch origin develop
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE_SHA="HEAD^"
+            HEAD_SHA="HEAD"
+          fi
 
-          CHANGED_FILES=$(git diff --name-only origin/develop...HEAD)
+          echo "BASE: $BASE_SHA"
+          echo "HEAD: $HEAD_SHA"
+
+          CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
 
           ALL_MODULES="auth-api gateway payment-api user-api"
           MODULES=""
