@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     # runs-on: [ dev-runner, self-hosted ]
     outputs:
-      changed: ${{ steps.changed-mods.outputs.changed }}
+      changed_json: ${{ steps.changed-mods.outputs.changed_json }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
