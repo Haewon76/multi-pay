@@ -52,3 +52,5 @@ spring:
 instance:
   id: user
   key: ${random.uuid}
+
+# 커밋 따로 감지하는지 테스트2
