@@ -4,3 +4,5 @@ external:
       url: https://kauth.kakao.com/oauth/token
     tiger:
       url: https://tiger-dev.mallowlink.com
+
+# common 변경감지 테스트
