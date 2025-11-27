@@ -100,6 +100,23 @@ jobs:
           echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_OUTPUT
           echo "APP_VERSION=${APP_VERSION}" # print
 
+      - name: Build with Gradle
+        shell: 'bash'
+        run: |
+          MODULE="${{ matrix.module }}"
+          echo "Building module: $MODULE"
+
+          GRADLE_CMD="./gradlew :$MODULE:build"
+
+          if [ "${{ inputs.run-tests }}" == "false" ]; then
+            GRADLE_CMD="$GRADLE_CMD -x test"
+          fi
+
+          GRADLE_CMD="$GRADLE_CMD --no-daemon --build-cache --project-cache-dir=/opt/hostedtoolcache/gradle_project_cache/${{ github.repository }}"
+          echo "Running: $GRADLE_CMD"
+          $GRADLE_CMD
+
+
       - name: Setup QEMU # 필요 없을거같기도 함
         uses: docker/setup-qemu-action@v2
 
