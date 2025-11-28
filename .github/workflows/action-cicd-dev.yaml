@@ -173,7 +173,9 @@ jobs:
 
           cat "$FILE"
 
-# yq -i "$KEY = env(APP_VERSION)" "$FILE"
+          yq -i ".$KEY |= env(APP_VERSION)" "$FILE"
+
+          cat "$FILE"
     
 
   #     -
