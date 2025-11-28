@@ -149,6 +149,12 @@ jobs:
           repository: ${{ github.repository_owner }}/pay-test
           path: ${{ github.workspace }}/k8s-clone
           ref: main
+      
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
     
       - name: Update Image Version in the related HelmChart values.yaml
         if: success()
@@ -165,7 +171,7 @@ jobs:
           KEY="${MODULE}.image.tag"
           echo ${KEY}
 
-          /opt/hostedtoolcache/bin/yq -i ".$KEY = strenv(APP_VERSION)" "$FILE"
+          yq -i ".$KEY = env(APP_VERSION)" "$FILE"
     
 
   #     -
