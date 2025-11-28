@@ -146,7 +146,7 @@ jobs:
         if: success()
         uses: actions/checkout@v4
         with:
-          repository: pay-test
+          repository: ${{ github.repository_owner }}/pay-test
           path: ${{ github.workspace }}/k8s-clone
           ref: main
     
