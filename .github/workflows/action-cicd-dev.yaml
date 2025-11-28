@@ -162,6 +162,12 @@ jobs:
           echo "$REPO_PATH"
           echo "$FILE"
 
+          KEY=".${INPUT_TAG_PREFIX:+${INPUT_TAG_PREFIX}.}image.tag"
+          echo ${KEY}
+
+# /opt/hostedtoolcache/bin/yq -i "eval(strenv(KEY)) = strenv(APP_VERSION)" "$FILE"
+    
+
   #     -
 
 # gradle build -> 아니 도커 빌드하는데에 다 들어가있지않나
