@@ -168,10 +168,10 @@ jobs:
           echo "$REPO_PATH"
           echo "$FILE"
 
-          KEY="${MODULE}.image.tag"
+          KEY=".${MODULE}.image.tag"
           echo ${KEY}
 
-          yq -i ".$KEY = env(APP_VERSION)" "$FILE"
+          yq -i "$KEY = env(APP_VERSION)" "$FILE"
     
 
   #     -
