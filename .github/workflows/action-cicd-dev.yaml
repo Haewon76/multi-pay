@@ -3,8 +3,8 @@ name: Deploy DEV
 on:
   push:
     branches: [ "develop" ]  # develop push trigger 시 실행
-    paths-ignore:
-      - '.github/**'
+    # paths-ignore:
+    #   - '.github/**'
   workflow_dispatch:
 permissions:
   contents: read
