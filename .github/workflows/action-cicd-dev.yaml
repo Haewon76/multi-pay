@@ -168,12 +168,9 @@ jobs:
           echo "$REPO_PATH"
           echo "$FILE"
 
-          KEY=".${MODULE}.image.tag"
-          echo ${KEY}
-
           cat "$FILE"
 
-          yq -i ".$KEY |= env(APP_VERSION)" "$FILE"
+          yq -i ".\"$MODULE\".image.tag = env(APP_VERSION)" "$FILE"
 
           cat "$FILE"
     
