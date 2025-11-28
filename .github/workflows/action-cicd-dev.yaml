@@ -162,10 +162,10 @@ jobs:
           echo "$REPO_PATH"
           echo "$FILE"
 
-          KEY=".${INPUT_TAG_PREFIX:+${INPUT_TAG_PREFIX}.}image.tag"
+          KEY="${MODULE}.image.tag"
           echo ${KEY}
 
-# /opt/hostedtoolcache/bin/yq -i "eval(strenv(KEY)) = strenv(APP_VERSION)" "$FILE"
+          /opt/hostedtoolcache/bin/yq -i ".$KEY = strenv(APP_VERSION)" "$FILE"
     
 
   #     -
