@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 
-      
+      # 모듈 내 소스파일 말고 루트 폴더에 있는 것들도 변경됐을때 배포되도록 해주어야하나 고민중
       - name: Determine changed files and modules
         id: changed-mods
         shell: bash
@@ -136,11 +136,25 @@ jobs:
           echo "$IMAGE"
 
           docker buildx build \
-            --platform linux/amd64 \
+            --platform linux/amd64, linux/arm64 \
             -t $IMAGE \
             --build-arg MODULE=${{ matrix.module }} \
             --push \
             .
+
+      - name: Checkout Target Repository
+        if: success()
+        uses: actions/checkout@v4
+        with:
+          repository: pay-test
+          path: ${{ github.workspace }}/k8s-clone
+          ssh-key: ${{ inputs.k8s-repo-ssh-key }}
+          ref: main
+    
+      - name: Update Image Version in the related HelmChart values.yaml
+        if: success()
+        shell: 'bash'
+        run: key=".${INPUT_TAG_PREFIX:+${INPUT_TAG_PREFIX}.}image.tag" /opt/hostedtoolcache/bin/yq -i 'eval(strenv(key)) = strenv(APP_VERSION)' "k8s-clone/${{ inputs.k8s-clone-app-name }}/values.${{ inputs.values-file }}.yaml"
 
 
   #     -
@@ -148,7 +162,8 @@ jobs:
 # gradle build -> 아니 도커 빌드하는데에 다 들어가있지않나
 # docker login
 # docker build
-# docker push
+# docker push -> 일단 개인 레포로 올라가는거까진 확인함
+# 헬름 차트 불러와서 수정하는거까지 하면 될듯싶긴한디
 
 
 

@@ -5,4 +5,4 @@ external:
     tiger:
       url: https://tiger-dev.mallowlink.com
 
-# common 변경감지 테스트 다시 테스트
+# common 변경감지 테스트 다시 테스트 전체 재빌드 및 푸시
