@@ -171,7 +171,9 @@ jobs:
           KEY=".${MODULE}.image.tag"
           echo ${KEY}
 
-          yq -i "$KEY = env(APP_VERSION)" "$FILE"
+          cat values.dev.yaml
+
+# yq -i "$KEY = env(APP_VERSION)" "$FILE"
     
 
   #     -
