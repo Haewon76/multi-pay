@@ -51,4 +51,4 @@ token:
   initializer:
     enabled: false  # Disable TokenInitializer for auth-api
 
-# 수정 감지 테스트1 커밋 따로따로 감지하는지 ㅅㄷㄴㅅ
+# 수정 감지 테스트1 커밋 따로따로 감지하는지 ㅅㄷㄴㅅㅁㄴㅇㄹㅁㄴㅇㄹ
