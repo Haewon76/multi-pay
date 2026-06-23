@@ -3,8 +3,8 @@ name: Deploy DEV
 on:
   push:
     branches: [ "develop" ]  # develop push trigger 시 실행
-    # paths-ignore:
-    #   - '.github/**'
+    paths-ignore:
+      - '.github/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -117,8 +117,8 @@ jobs:
           $GRADLE_CMD
 
 
-      - name: Setup QEMU # 필요 없을거같기도 함
-        uses: docker/setup-qemu-action@v2
+      # - name: Setup QEMU # 필요 없을거같기도 함
+      #   uses: docker/setup-qemu-action@v2
 
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v3
@@ -142,49 +142,49 @@ jobs:
             --push \
             .
 
-      - name: Checkout Target Repository
-        if: success()
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository_owner }}/pay-test
-          path: ${{ github.workspace }}/k8s-clone
-          ref: main
+      # - name: Checkout Target Repository
+      #   if: success()
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: ${{ github.repository_owner }}/pay-test
+      #     path: ${{ github.workspace }}/k8s-clone
+      #     ref: main
       
-      - name: Install yq
-        run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
+      # - name: Install yq
+      #   run: |
+      #     sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+      #     sudo chmod +x /usr/local/bin/yq
 
     
-      - name: Update Image Version in the related HelmChart values.yaml
-        if: success()
-        shell: 'bash'
-        run: |
-          MODULE="${{ matrix.module }}"
-          REPO_PATH="${{ github.workspace }}/k8s-clone/charts/$MODULE"
-          FILE="$REPO_PATH/values.dev.yaml"
+      # - name: Update Image Version in the related HelmChart values.yaml
+      #   if: success()
+      #   shell: 'bash'
+      #   run: |
+      #     MODULE="${{ matrix.module }}"
+      #     REPO_PATH="${{ github.workspace }}/k8s-clone/charts/$MODULE"
+      #     FILE="$REPO_PATH/values.dev.yaml"
 
-          echo "$MODULE"
-          echo "$REPO_PATH"
-          echo "$FILE"
+      #     echo "$MODULE"
+      #     echo "$REPO_PATH"
+      #     echo "$FILE"
 
-          cat "$FILE"
+      #     cat "$FILE"
 
-          yq -i ".\"$MODULE\".image.tag = env(APP_VERSION)" "$FILE"
+      #     yq -i ".\"$MODULE\".image.tag = env(APP_VERSION)" "$FILE"
 
-          cat "$FILE"
+      #     cat "$FILE"
 
-      # k8s commit & push
-      - name: Git commit & push
-        if: success()
-        shell: 'bash'
-        run: |
-          cd $GITHUB_WORKSPACE/k8s-clone
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Update Image Version to $APP_VERSION"
-          git push origin main
+      # # k8s commit & push
+      # - name: Git commit & push
+      #   if: success()
+      #   shell: 'bash'
+      #   run: |
+      #     cd $GITHUB_WORKSPACE/k8s-clone
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      #     git add .
+      #     git commit -m "Update Image Version to $APP_VERSION"
+      #     git push origin main
     
 
   #     -
