@@ -80,6 +80,14 @@ jobs:
         module: ${{ fromJson(needs.detect-modules.outputs.changed_json) }}
 
     steps:
+      - name: Validate input
+        shell: 'bash'
+        run: |
+          if [[ "${{ inputs.run-jdk-version }}" != "11" && "${{ inputs.run-jdk-version }}" != "17" && "${{ inputs.run-jdk-version }}" != "21" ]]; then
+            echo "Invalid input: ${{ inputs.run-jdk-version }}. Allowed values are 11, 17, or 21."
+            exit 1
+          fi
+
       - name: Configure Git
         shell: 'bash'
         run: git config --global http.postBuffer 314572800  # 300MB로 설정
@@ -92,10 +100,14 @@ jobs:
         shell: 'bash'
         run: |
           echo "branch :: $GITHUB_REF_NAME"
-          echo "sha :: ${GITHUB_SHA::10}"
           values_prefix=${INPUT_VALUES_PREFIX:-}
-          APP_VERSION="$GITHUB_REF_NAME-${GITHUB_SHA::10}"
+
+          BUILD_TIME=$(date -u +"%y%m%d%H%M%S")
+          SAFE_BRANCH=$(echo "$GITHUB_REF_NAME" | tr '/' '-')
+
+          APP_VERSION="${SAFE_BRANCH}-${BUILD_TIME}"
           APP_VERSION="${values_prefix:+${values_prefix}-}${APP_VERSION}"
+          
           echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
           echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_OUTPUT
           echo "APP_VERSION=${APP_VERSION}" # print
@@ -142,37 +154,37 @@ jobs:
             --push \
             .
 
-      # - name: Checkout Target Repository
-      #   if: success()
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: ${{ github.repository_owner }}/pay-test
-      #     path: ${{ github.workspace }}/k8s-clone
-      #     ref: main
+      - name: Checkout Target Repository
+        if: success()
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/pay-test
+          path: ${{ github.workspace }}/k8s-clone
+          ref: main
       
-      # - name: Install yq
-      #   run: |
-      #     sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-      #     sudo chmod +x /usr/local/bin/yq
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
     
-      # - name: Update Image Version in the related HelmChart values.yaml
-      #   if: success()
-      #   shell: 'bash'
-      #   run: |
-      #     MODULE="${{ matrix.module }}"
-      #     REPO_PATH="${{ github.workspace }}/k8s-clone/charts/$MODULE"
-      #     FILE="$REPO_PATH/values.dev.yaml"
+      - name: Update Image Version in the related HelmChart values.yaml
+        if: success()
+        shell: 'bash'
+        run: |
+          MODULE="${{ matrix.module }}"
+          REPO_PATH="${{ github.workspace }}/k8s-clone/charts/$MODULE"
+          FILE="$REPO_PATH/values.dev.yaml"
 
-      #     echo "$MODULE"
-      #     echo "$REPO_PATH"
-      #     echo "$FILE"
+          echo "$MODULE"
+          echo "$REPO_PATH"
+          echo "$FILE"
 
-      #     cat "$FILE"
+          cat "$FILE"
 
-      #     yq -i ".\"$MODULE\".image.tag = env(APP_VERSION)" "$FILE"
+          yq -i ".\"$MODULE\".image.tag = env(APP_VERSION)" "$FILE"
 
-      #     cat "$FILE"
+          cat "$FILE"
 
       # # k8s commit & push
       # - name: Git commit & push
