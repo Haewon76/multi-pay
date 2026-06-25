@@ -80,14 +80,6 @@ jobs:
         module: ${{ fromJson(needs.detect-modules.outputs.changed_json) }}
 
     steps:
-      - name: Validate input
-        shell: 'bash'
-        run: |
-          if [[ "${{ inputs.run-jdk-version }}" != "11" && "${{ inputs.run-jdk-version }}" != "17" && "${{ inputs.run-jdk-version }}" != "21" ]]; then
-            echo "Invalid input: ${{ inputs.run-jdk-version }}. Allowed values are 11, 17, or 21."
-            exit 1
-          fi
-
       - name: Configure Git
         shell: 'bash'
         run: git config --global http.postBuffer 314572800  # 300MB로 설정
@@ -161,7 +153,7 @@ jobs:
           repository: ${{ github.repository_owner }}/pay-test
           path: ${{ github.workspace }}/k8s-clone
           ref: main
-      
+          
       - name: Install yq
         run: |
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
